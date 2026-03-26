@@ -1,0 +1,403 @@
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  color-scheme: light;
+  --bg: #f6f7fb;
+  --panel: #ffffff;
+  --panel-strong: #ffffff;
+  --border: #d9dde7;
+  --text: #161616;
+  --muted: #4b5563;
+  --accent: #000091;
+  --accent-2: #e1000f;
+  --shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+html, body, #root {
+  margin: 0;
+  min-height: 100%;
+  font-family: "Marianne", Inter, Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+button {
+  font: inherit;
+}
+
+.page-shell {
+  position: relative;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 32px 20px 56px;
+}
+
+.background-glow {
+  display: none;
+}
+
+.glow-1 {
+  top: 60px;
+  left: -80px;
+  background: #7c3aed;
+}
+
+.glow-2 {
+  right: -60px;
+  top: 280px;
+  background: #0ea5e9;
+}
+
+.hero-card,
+.panel,
+.score-card {
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+.hero-card {
+  display: grid;
+  grid-template-columns: 1.2fr 0.9fr;
+  gap: 24px;
+  align-items: end;
+  padding: 32px;
+  border-radius: 8px;
+  background: var(--panel-strong);
+  position: relative;
+}
+
+.hero-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #000091 0 33%, #ffffff 33% 66%, #e1000f 66% 100%);
+}
+
+.eyebrow {
+  display: inline-flex;
+  padding: 6px 12px;
+  border-radius: 4px;
+  background: #f0f4ff;
+  color: #000091;
+  border: 1px solid #c5d0ff;
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+}
+
+.hero-card h1 {
+  margin: 14px 0 10px;
+  font-size: clamp(2rem, 4vw, 3.3rem);
+  line-height: 1.05;
+}
+
+.hero-text {
+  max-width: 720px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.hero-stats {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.mini-stat {
+  padding: 18px;
+  border-radius: 6px;
+  background: #f8fafc;
+  border: 1px solid var(--border);
+}
+
+.mini-stat span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+}
+
+.mini-stat strong {
+  font-size: 1.05rem;
+}
+
+.scores-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-top: 22px;
+}
+
+.score-card {
+  background: var(--panel);
+  border-radius: 8px;
+  padding: 20px;
+  animation: fadeUp 0.6s ease both;
+}
+
+.score-label {
+  margin: 0 0 16px;
+  color: var(--muted);
+  font-size: 0.94rem;
+}
+
+.score-row {
+  display: grid;
+  gap: 14px;
+}
+
+.score-value {
+  font-size: 1.7rem;
+}
+
+.score-bar {
+  height: 10px;
+  border-radius: 999px;
+  background: #e7ebf3;
+  overflow: hidden;
+}
+
+.score-bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #000091, #1212ff);
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1.45fr 0.75fr;
+  gap: 22px;
+  margin-top: 22px;
+}
+
+.panel {
+  background: var(--panel);
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.large-panel {
+  min-height: 620px;
+}
+
+.panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.panel h2,
+.panel-head h2 {
+  margin: 0;
+  font-size: 1.35rem;
+}
+
+.panel p,
+.panel-head p {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.tag {
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: 1px solid #c5d0ff;
+  background: #f0f4ff;
+  color: #000091;
+  white-space: nowrap;
+  font-size: 0.85rem;
+}
+
+.map-layout {
+  display: grid;
+  grid-template-columns: 1fr 290px;
+  gap: 20px;
+}
+
+.map-box {
+  min-height: 520px;
+  border-radius: 8px;
+  background: #f9fafb;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.gironde-map {
+  width: 100%;
+  height: 100%;
+}
+
+.cantons-layer {
+  pointer-events: none;
+}
+
+.canton-boundary {
+  stroke: rgba(71, 85, 105, 0.35);
+  stroke-width: 0.85;
+}
+
+.city-dot {
+  fill: #334155;
+  cursor: pointer;
+  transition: transform 0.2s ease, fill 0.2s ease, filter 0.2s ease;
+  transform-origin: center;
+}
+
+.city-dot:hover,
+.city-dot.active {
+  fill: #000091;
+  filter: drop-shadow(0 0 8px rgba(0, 0, 145, 0.35));
+  transform: scale(1.18);
+}
+
+.city-label {
+  fill: #1f2937;
+  font-size: 12px;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+.city-panel {
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  padding: 18px;
+  background: #f9fafb;
+  border: 1px solid var(--border);
+}
+
+.city-kicker {
+  color: #000091;
+  font-size: 0.84rem;
+}
+
+.city-panel-top h3 {
+  margin: 8px 0 10px;
+  font-size: 1.8rem;
+}
+
+.city-panel-top p {
+  margin: 0;
+}
+
+.info-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.info-card {
+  padding: 14px;
+  border-radius: 6px;
+  background: #ffffff;
+  border: 1px solid var(--border);
+}
+
+.info-card span {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.info-card strong {
+  font-size: 1rem;
+}
+
+.primary-button {
+  margin-top: auto;
+  border: 1px solid #000091;
+  border-radius: 6px;
+  padding: 14px 16px;
+  background: #000091;
+  color: #ffffff;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.primary-button:hover {
+  transform: translateY(-1px);
+  opacity: 0.95;
+}
+
+.stack-cards {
+  display: grid;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.stack-card {
+  padding: 18px;
+  border-radius: 6px;
+  background: #ffffff;
+  border: 1px solid var(--border);
+}
+
+.stack-card strong {
+  display: block;
+  margin-bottom: 8px;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 1100px) {
+  .scores-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .dashboard-grid,
+  .hero-card,
+  .map-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .page-shell {
+    padding: 18px 14px 42px;
+  }
+
+  .hero-card,
+  .panel,
+  .score-card {
+    border-radius: 8px;
+  }
+
+  .hero-card {
+    padding: 22px;
+  }
+
+  .hero-stats,
+  .scores-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .map-box {
+    min-height: 420px;
+  }
+
+  .city-panel-top h3 {
+    font-size: 1.5rem;
+  }
+}
