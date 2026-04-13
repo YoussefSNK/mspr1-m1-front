@@ -29,18 +29,14 @@ function normalizeResults(data) {
     extreme_droite: 'Extrême droite',
   }
 
-  if (Array.isArray(data)) {
-    return data.map((item) => {
-      const key = item.key ?? item.tendance ?? item.categorie ?? ''
-      const value = item.value ?? item.pct ?? item.pourcentage ?? 0
-      return { key, label: item.label ?? LABELS[key] ?? key, value: Number(value) }
-    })
-  }
+  // { tendances: [...] } — format renvoyé par GET /api/results
+  const list = Array.isArray(data) ? data : (data.tendances ?? [])
 
-  // format objet plat
-  return Object.entries(data)
-    .filter(([, v]) => typeof v === 'number')
-    .map(([k, v]) => ({ key: k, label: LABELS[k] ?? k, value: Number(v) }))
+  return list.map((item) => {
+    const key = item.key ?? item.tendance ?? item.categorie ?? ''
+    const value = item.value ?? item.pct ?? item.pourcentage ?? 0
+    return { key, label: item.label ?? LABELS[key] ?? key, value: Number(value) }
+  })
 }
 
 /**
