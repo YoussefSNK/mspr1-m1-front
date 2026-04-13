@@ -128,6 +128,7 @@ export default function App() {
   const [loadingCities, setLoadingCities] = useState(true)
   const [loadingResults, setLoadingResults] = useState(true)
   const [error, setError] = useState(null)
+  const [cityLimit, setCityLimit] = useState(7)
 
   // Chargement initial
   useEffect(() => {
@@ -202,11 +203,15 @@ export default function App() {
     [mapProjection]
   )
 
+  const parsePop = (p) => parseInt(String(p).replace(/[\s,]/g, ''), 10) || 0
+
   const cityPoints = useMemo(
-    () => cities
+    () => [...cities]
       .filter((c) => c.lon !== 0 || c.lat !== 0)
+      .sort((a, b) => parsePop(b.population) - parsePop(a.population))
+      .slice(0, cityLimit)
       .map((city) => ({ ...city, ...mapProjection.projectPoint(city.lon, city.lat) })),
-    [cities, mapProjection]
+    [cities, mapProjection, cityLimit]
   )
 
   const total = useMemo(
@@ -264,7 +269,21 @@ export default function App() {
               <h2>Carte départementale de la Gironde</h2>
               <p>Sélectionne une commune pour consulter les informations associées.</p>
             </div>
-            <span className="tag">Données territoriales</span>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
+              <span className="tag">Données territoriales</span>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: '#94a3b8' }}>
+                Villes affichées : <strong style={{ color: '#e2e8f0', minWidth: 24, textAlign: 'right' }}>{cityLimit}</strong>
+                <input
+                  type="range"
+                  min={1}
+                  max={Math.max(cities.length, 1)}
+                  value={cityLimit}
+                  onChange={(e) => setCityLimit(Number(e.target.value))}
+                  style={{ width: 120 }}
+                />
+                <span style={{ minWidth: 24, color: '#64748b' }}>{Math.max(cities.length, 1)}</span>
+              </label>
+            </div>
           </div>
 
           <div className="map-layout">
