@@ -1,6 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import App from './App.jsx'
+import AppOld from './App_old.jsx'
 import './styles.css'
 
 class AppErrorBoundary extends React.Component {
@@ -35,7 +37,12 @@ class AppErrorBoundary extends React.Component {
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <AppErrorBoundary>
-      <App />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<App />} />
+          <Route path="/old" element={<AppOld />} />
+        </Routes>
+      </BrowserRouter>
     </AppErrorBoundary>
   </React.StrictMode>
 )
