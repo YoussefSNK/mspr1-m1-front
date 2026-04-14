@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import girondeGeoJsonRaw from "./data/gironde.geojson?raw";
 import cantonsGeoJsonRaw from "./data/cantons-33-gironde.geojson?raw";
-import { fetchResults, fetchCities, fetchCity } from "./api";
+import { fetchResults, fetchCities, fetchCity, fetchPredict } from "./api";
 
 const girondeGeoJson = JSON.parse(girondeGeoJsonRaw);
 const cantonsGeoJson = JSON.parse(cantonsGeoJsonRaw);
@@ -106,6 +106,129 @@ function ScoreCard({ label, value, index }) {
         </div>
       </div>
     </article>
+  )
+}
+
+const PREDICT_FIELDS = [
+  { key: 'FEAT_Vote_2017',                                    label: '% vote Extrême Droite 2017' },
+  { key: 'Mediane_du_niveau_vie',                             label: 'Médiane du niveau de vie (€)' },
+  { key: 'part_ouvrier',                                      label: 'Part des ouvriers (%)' },
+  { key: 'part_cadre',                                        label: 'Part des cadres (%)' },
+  { key: 'part_retraite_csp',                                 label: 'Part des retraités (%)' },
+  { key: 'Cambriolages_de_logement_nombre_sum',               label: 'Cambriolages de logement' },
+  { key: 'Violences_physiques_hors_cadre_familial_nombre_sum',label: 'Violences physiques' },
+  { key: 'age_moyen',                                         label: 'Âge moyen (ans)' },
+  { key: 'Sans_Diplome_CEP',                                  label: 'Sans diplôme ou CEP (%)' },
+]
+
+const PREDICT_LABELS = {
+  extreme_gauche: 'Extrême gauche',
+  gauche:         'Gauche',
+  centre:         'Centre',
+  droite:         'Droite',
+  extreme_droite: 'Extrême droite',
+}
+
+function PredictionSection() {
+  const emptyForm = Object.fromEntries(PREDICT_FIELDS.map(f => [f.key, '']))
+  const [form, setForm] = useState(emptyForm)
+  const [result, setResult] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+
+  function handleChange(e) {
+    setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault()
+    setLoading(true)
+    setError(null)
+    setResult(null)
+
+    const input = Object.fromEntries(
+      Object.entries(form).map(([k, v]) => [k, v === '' ? null : Number(v)])
+    )
+
+    try {
+      const data = await fetchPredict('modele_rf_global_electio', input)
+      setResult(data.prediction)
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  function handleReset() {
+    setForm(emptyForm)
+    setResult(null)
+    setError(null)
+  }
+
+  return (
+    <section className="panel" style={{ marginTop: 22 }}>
+      <div className="panel-head">
+        <div>
+          <h2>Prédiction IA par commune</h2>
+          <p>Renseigne les indicateurs d'une commune pour estimer la répartition des votes. Les champs laissés vides sont remplacés par la médiane de l'entraînement.</p>
+        </div>
+        <span className="tag">modele_rf_global_electio</span>
+      </div>
+
+      <form onSubmit={handleSubmit}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 20 }}>
+          {PREDICT_FIELDS.map(({ key, label }) => (
+            <label key={key} style={{ display: 'flex', flexDirection: 'column', gap: 6, fontSize: '0.9rem', color: 'var(--muted)' }}>
+              {label}
+              <input
+                type="number"
+                name={key}
+                value={form[key]}
+                onChange={handleChange}
+                placeholder="—"
+                step="any"
+                style={{
+                  padding: '10px 12px',
+                  borderRadius: 6,
+                  border: '1px solid var(--border)',
+                  background: '#f9fafb',
+                  fontSize: '0.95rem',
+                  color: 'var(--text)',
+                  outline: 'none',
+                }}
+              />
+            </label>
+          ))}
+        </div>
+
+        <div style={{ display: 'flex', gap: 12 }}>
+          <button type="submit" className="primary-button" disabled={loading} style={{ marginTop: 0 }}>
+            {loading ? 'Calcul en cours…' : 'Lancer la prédiction'}
+          </button>
+          <button type="button" onClick={handleReset} style={{ marginTop: 0, padding: '14px 16px', borderRadius: 6, border: '1px solid var(--border)', background: 'transparent', cursor: 'pointer', color: 'var(--muted)' }}>
+            Réinitialiser
+          </button>
+        </div>
+      </form>
+
+      {error && (
+        <div style={{ marginTop: 20, padding: '12px 16px', background: '#fff1f2', color: '#be123c', border: '1px solid #fecdd3', borderRadius: 8 }}>
+          Erreur : {error}
+        </div>
+      )}
+
+      {result && (
+        <div style={{ marginTop: 24 }}>
+          <p style={{ margin: '0 0 14px', color: 'var(--muted)', fontSize: '0.9rem' }}>Résultats estimés (en %)</p>
+          <div className="scores-grid">
+            {Object.entries(result).map(([key, value], index) => (
+              <ScoreCard key={key} label={PREDICT_LABELS[key] ?? key} value={value} index={index} />
+            ))}
+          </div>
+        </div>
+      )}
+    </section>
   )
 }
 
@@ -392,6 +515,8 @@ export default function App() {
           </div>
         </div>
       </section>
+
+      <PredictionSection />
     </div>
   )
 }

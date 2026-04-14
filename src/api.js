@@ -29,3 +29,12 @@ export function filterCities(criteria) {
     body: JSON.stringify(criteria),
   })
 }
+
+/** Prédiction IA — POST /predict */
+export function fetchPredict(modelName, input) {
+  return apiFetch('/predict', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ model_name: modelName, input }),
+  })
+}
