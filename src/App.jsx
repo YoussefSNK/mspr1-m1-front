@@ -110,15 +110,20 @@ function ScoreCard({ label, value, index }) {
 }
 
 const PREDICT_FIELDS = [
-  { key: 'FEAT_Vote_2017',                                    label: '% vote Extrême Droite 2017' },
-  { key: 'Mediane_du_niveau_vie',                             label: 'Médiane du niveau de vie (€)' },
-  { key: 'part_ouvrier',                                      label: 'Part des ouvriers (%)' },
-  { key: 'part_cadre',                                        label: 'Part des cadres (%)' },
-  { key: 'part_retraite_csp',                                 label: 'Part des retraités (%)' },
-  { key: 'Cambriolages_de_logement_nombre_sum',               label: 'Cambriolages de logement' },
-  { key: 'Violences_physiques_hors_cadre_familial_nombre_sum',label: 'Violences physiques' },
+  { key: 'Part_des_revenus_du_patrimoine_et_autres_revenus',  label: 'Part des revenus du patrimoine et autres revenus (%)' },
+  { key: 'Part_des_impots',                                   label: 'Part des impôts (%, valeur négative)' },
+  { key: 'Part_des_menages_fiscaux_imposes',                  label: 'Part des ménages fiscaux imposés (%)' },
+  { key: 'decile_9_niveau_de_vie',                            label: '9e décile du niveau de vie (€/an)' },
+  { key: 'rapport_interdecile_d9_d1',                         label: 'Rapport interdécile (D9/D1)' },
+  { key: 'dont_part_des_revenus_des_activites_non_salariees', label: "Part des revenus d'activités non salariées (%)" },
+  { key: 'Mediane_du_niveau_vie',                             label: 'Médiane du niveau de vie (€/an)' },
+  { key: 'dont_part_des_prestations_familiales',              label: 'Part des prestations familiales (%)' },
+  { key: 'dont_part_des_indemnites_de_chomage',               label: 'Part des indemnités de chômage (%)' },
+  { key: 'Part_des_pensions_retraites_et_rentes',             label: 'Part des pensions, retraites et rentes (%)' },
   { key: 'age_moyen',                                         label: 'Âge moyen (ans)' },
-  { key: 'Sans_Diplome_CEP',                                  label: 'Sans diplôme ou CEP (%)' },
+  { key: 'part_cadre',                                        label: 'Part des cadres (%)' },
+  { key: 'part_ouvrier',                                      label: 'Part des ouvriers (%)' },
+  { key: 'nombre_personnes_menages_fiscaux',                  label: 'Population de la commune (nb d\'habitants, valeur brute)' },
 ]
 
 const PREDICT_LABELS = {
@@ -177,7 +182,7 @@ function PredictionSection() {
       </div>
 
       <form onSubmit={handleSubmit}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 20 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16, marginBottom: 20 }}>
           {PREDICT_FIELDS.map(({ key, label }) => (
             <label key={key} style={{ display: 'flex', flexDirection: 'column', gap: 6, fontSize: '0.9rem', color: 'var(--muted)' }}>
               {label}
