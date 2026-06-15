@@ -177,15 +177,19 @@ button {
   margin-top: 22px;
 }
 
+/* La carte occupe désormais toute la largeur disponible
+   (le panneau "Organisation du tableau de bord" a été retiré) */
+.dashboard-grid--single {
+  grid-template-columns: 1fr;
+}
+
 .panel {
   background: var(--panel);
   border-radius: 8px;
   padding: 24px;
 }
 
-.large-panel {
-  min-height: 620px;
-}
+.large-panel { min-height: auto }
 
 .panel-head {
   display: flex;
@@ -224,7 +228,10 @@ button {
 }
 
 .map-box {
-  min-height: 520px;
+  height: 480px;
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
   border-radius: 8px;
   background: #f9fafb;
   border: 1px solid var(--border);
@@ -232,11 +239,89 @@ button {
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  position: relative;
+}
+
+.map-controls {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: stretch;
+}
+
+.map-zoom-button {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--text);
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* touch target confortable au doigt */
+  touch-action: manipulation;
+}
+
+.map-zoom-button:hover,
+.map-zoom-button:active {
+  background: #ffffff;
+}
+
+.map-reset-button {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--muted);
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+  touch-action: manipulation;
+}
+
+.map-reset-button:hover {
+  background: #ffffff;
+  color: var(--text);
+}
+
+.map-hint {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  z-index: 2;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.85);
+  color: #9aa3b2;
+  font-size: 0.72rem;
+  pointer-events: none;
+}
+
+@media (max-width: 720px) {
+  .map-hint {
+    display: none;
+  }
 }
 
 .gironde-map {
   width: 100%;
   height: 100%;
+  display: block;
+  cursor: grab;
+  touch-action: none;
+}
+
+.gironde-map:active {
+  cursor: grabbing;
 }
 
 .cantons-layer {
@@ -250,23 +335,26 @@ button {
 
 .city-dot {
   fill: #334155;
-  cursor: pointer;
-  transition: transform 0.2s ease, fill 0.2s ease, filter 0.2s ease;
-  transform-origin: center;
+  /* Pas de transform/scale au survol : un agrandissement du point
+     déclenchait un re-render du panneau de droite et donnait
+     l'impression que le bouton "Consulter la fiche détaillée" se déplaçait. */
+  transition: fill 0.2s ease, filter 0.2s ease;
 }
 
 .city-dot:hover,
 .city-dot.active {
   fill: #000091;
   filter: drop-shadow(0 0 8px rgba(0, 0, 145, 0.35));
-  transform: scale(1.18);
 }
 
 .city-label {
   fill: #1f2937;
-  font-size: 12px;
   font-weight: 600;
   pointer-events: none;
+  paint-order: stroke;
+  stroke: #ffffff;
+  stroke-width: 3px;
+  stroke-linejoin: round;
 }
 
 .city-panel {
@@ -332,22 +420,116 @@ button {
   opacity: 0.95;
 }
 
-.stack-cards {
-  display: grid;
-  gap: 14px;
-  margin-top: 18px;
+.primary-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
 }
 
-.stack-card {
-  padding: 18px;
-  border-radius: 6px;
-  background: #ffffff;
+.secondary-button {
   border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 14px 16px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
-.stack-card strong {
-  display: block;
-  margin-bottom: 8px;
+.secondary-button:hover {
+  background: #f1f3f9;
+  color: var(--text);
+}
+
+/* ---------------------------------------------------------------------- */
+/* Prédiction IA par commune                                               */
+/* ---------------------------------------------------------------------- */
+
+.prediction-panel {
+  margin-top: 22px;
+}
+
+.predict-group {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 18px 20px 20px;
+  margin: 0 0 18px;
+}
+
+.predict-group legend {
+  padding: 0 8px;
+  margin-left: -8px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.predict-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.predict-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.predict-field-label {
+  font-size: 0.88rem;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.predict-field-unit {
+  color: #9aa3b2;
+}
+
+.predict-field-hint {
+  font-size: 0.78rem;
+  color: #9aa3b2;
+}
+
+.predict-field input {
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: #f9fafb;
+  font-size: 0.95rem;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.predict-field input:focus {
+  border-color: var(--accent);
+  background: #ffffff;
+}
+
+.predict-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.predict-error {
+  margin-top: 20px;
+  padding: 12px 16px;
+  background: #fff1f2;
+  color: #be123c;
+  border: 1px solid #fecdd3;
+  border-radius: 8px;
+}
+
+.predict-results {
+  margin-top: 24px;
+}
+
+.predict-results-label {
+  margin: 0 0 14px;
+  color: var(--muted);
+  font-size: 0.9rem;
 }
 
 @keyframes fadeUp {
@@ -394,10 +576,14 @@ button {
   }
 
   .map-box {
-    min-height: 420px;
+    height: 420px;
   }
 
   .city-panel-top h3 {
     font-size: 1.5rem;
+  }
+
+  .predict-actions {
+    flex-direction: column;
   }
 }
