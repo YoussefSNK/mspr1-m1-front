@@ -146,7 +146,23 @@ const PREDICT_LABELS = {
 
 function PredictionSection() {
   const allFields = PREDICT_GROUPS.flatMap((g) => g.fields)
-  const emptyForm = Object.fromEntries(allFields.map(f => [f.key, '']))
+  const DEFAULT_VALUES = {
+    Part_des_revenus_du_patrimoine_et_autres_revenus: '8',
+    Part_des_impots: '-16',
+    Part_des_menages_fiscaux_imposes: '54',
+    decile_9_niveau_de_vie: '40155.8',
+    rapport_interdecile_d9_d1: '3.11',
+    Mediane_du_niveau_vie: '23234',
+    dont_part_des_revenus_des_activites_non_salariees: '5.09',
+    dont_part_des_prestations_familiales: '1.82',
+    dont_part_des_indemnites_de_chomage: '3.4',
+    Part_des_pensions_retraites_et_rentes: '26.88',
+    age_moyen: '41.28',
+    part_cadre: '10.31',
+    part_ouvrier: '11.37',
+    nombre_personnes_menages_fiscaux: '2873.95',
+}
+const emptyForm = Object.fromEntries(allFields.map(f => [f.key, DEFAULT_VALUES[f.key] ?? '']))
   const [form, setForm] = useState(emptyForm)
   const [result, setResult] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -177,7 +193,7 @@ function PredictionSection() {
   }
 
   function handleReset() {
-    setForm(emptyForm)
+    setForm(Object.fromEntries(allFields.map(f => [f.key, DEFAULT_VALUES[f.key] ?? ''])))
     setResult(null)
     setError(null)
   }
